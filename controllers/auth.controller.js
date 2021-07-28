@@ -15,7 +15,6 @@ const login = async (req, res) => {
         msg: "Datos no validos.",
       });
     }
-
     // Verificar Contraseña
     const validPassword = bcrypt.compareSync(password, userDB.password);
     if (!validPassword) {
