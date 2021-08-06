@@ -2,7 +2,7 @@
     Path: /api/sauces
 */
 const { Router } = require('express'); 
-const { getAllSauces, getOneSauce, createSauces, updateSauces, deleteSauces. likeSauces} = require('../controllers/sauces.controller');
+const { getAllSauces, getOneSauce, createSauces, updateSauces, deleteSauces, likeSauces} = require('../controllers/sauces.controller');
 const auth = require('../middleware/auth');
 
 const multer = require('../middleware/multer-config');

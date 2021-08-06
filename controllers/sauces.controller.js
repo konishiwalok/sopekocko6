@@ -87,9 +87,89 @@ const deleteSauces = async (req, res) => {
     .catch(error => res.status(500).json({ error }));
 }
 
+
+
 // LIKES DISLIKES
 
 const likeSauces  = async (req, res) => {
+
+
+  const ketchup = {
+    id: 1,
+    likes: 0,
+    dislikes: 0,
+    userDislikes: [],
+    userLikes: []
+}
+ 
+const choice = {
+    LIKE: 1,
+    DISLIKE: -1,
+    RESET: 0,
+}
+ 
+function vote(userId, userChoice, sauce) {
+    if (!(Number.isInteger(userChoice) && (userChoice >= -1 && userChoice <= 1) && Number.isInteger(userId))) {
+        console.log('error ')
+        return null
+    }
+ 
+    if(userChoice === choice.RESET){
+        console.log('reset all likes ')
+        removeUser(userId, sauce.userLikes)
+        removeUser(userId, sauce.userDislikes)
+    }
+    if(userChoice === choice.LIKE){
+        console.log('user liked the sauce ')
+        if(sauce.userLikes.find(u => u === userId)){
+            console.log('user already voted ‍')
+            return 'you have déjà voté !'
+        }
+        sauce['userLikes'].push(userId)
+        sauce['likes'] = ketchup['userLikes'].length
+ 
+        if(sauce.userDislikes.find(u => u === userId)){
+            removeUser(userId, sauce.userDislikes)
+        }
+    }
+ 
+    if(userChoice === choice.DISLIKE){
+        console.log('user hate the sauce ')
+        if(sauce.userDislikes.find(u => u === userId)){
+            console.log('user already voted ‍')
+            return 'you have déjà voté !'
+        }
+        ketchup['userDislikes'].push(userId)
+        ketchup['dislikes'] = ketchup['userDislikes'].length
+ 
+        if(sauce.userLikes.find(u => u === userId)){
+            removeUser(userId, sauce.userLikes)
+        }
+    }
+ 
+    sauce.likes = sauce.userLikes.length
+    sauce.dislikes = sauce.userDislikes.length
+ 
+    return sauce
+}
+ 
+function removeUser(userId, likesTab) {
+    const index = likesTab.indexOf(userId)
+    if (index > -1) {
+        likesTab.splice(index, 1)
+    }
+ 
+    return likesTab
+}
+ 
+console.log(vote(1, 1, ketchup)) // user like the sauce
+console.log(vote(1, -1, ketchup)) // user dislike the sauce
+console.log(vote(1, 0, ketchup)) // user reset all sauces
+// our user is very hungry and liked the sauce twice, but then got caught by our police :-)
+console.log(vote(1, 1, ketchup))
+console.log(vote(1, 1, ketchup))
+ 
+console.log('MY SAUCE', ketchup)
 
 }
 
