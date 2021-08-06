@@ -4,6 +4,8 @@ const fs = require('fs');
 
 const regex = /[a-zA-Z0-9 _.,'’(Ééèàû)]+$/;
 
+// ALL THE SAUCES IN SCREEN 
+
 const getAllSauces = async (req, res) => {
   
     Sauce.find().then(
@@ -18,6 +20,7 @@ const getAllSauces = async (req, res) => {
       }
     );   
 }
+// GET THE ID OF PRODUCT + INFOS
 
 
 const getOneSauce = async (req, res) => {
@@ -26,7 +29,8 @@ const getOneSauce = async (req, res) => {
   .then((sauce) => res.status(200).json(sauce))
   .catch((error) => res.status(404).json({ error }));
 };
- 
+ // CREATE SAUCE + IMAGE + VALIDATIONS
+
 
 const createSauces = async (req, res) => {
 
@@ -54,12 +58,16 @@ const createSauces = async (req, res) => {
     .then(() => res.status(201).json({ message: sauceObject.name}))
     .catch(error => res.status(400).json({ error }));
 }
+// MODIFY + IMAGE + TEXTES
+
 
 const updateSauces = async (req, res) => {
   const sauceObject = req.file
   console.log(sauceObject);
   res.json({ message: 'SI paso'})
 }
+
+// DELETE + IMAGE
 
 const deleteSauces = async (req, res) => {
   Sauce.findOne({ _id: req.params.id })
