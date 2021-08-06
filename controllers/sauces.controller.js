@@ -22,21 +22,11 @@ const getAllSauces = async (req, res) => {
 
 const getOneSauce = async (req, res) => {
 
-  const id = req.params.id;
-  console.log(id);
-
-  Sauce.findById(id).then(
-    (sauces) => {
-      res.status(200).json(sauces);
-    }
-  ).catch(
-    (error) => {
-      res.status(400).json({
-        error: error
-      });
-    }
-  );   
-}
+  Sauce.findOne({ _id: req.params.id })
+  .then((sauce) => res.status(200).json(sauce))
+  .catch((error) => res.status(404).json({ error }));
+};
+ 
 
 const createSauces = async (req, res) => {
 
