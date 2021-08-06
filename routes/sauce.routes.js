@@ -2,7 +2,7 @@
     Path: /api/sauces
 */
 const { Router } = require('express'); 
-const { getAllSauces, getOneSauce, createSauces, updateSauces, deleteSauces } = require('../controllers/sauces.controller');
+const { getAllSauces, getOneSauce, createSauces, updateSauces, deleteSauces. likeSauces} = require('../controllers/sauces.controller');
 const auth = require('../middleware/auth');
 
 const multer = require('../middleware/multer-config');
@@ -16,10 +16,10 @@ router.get('/:id', getOneSauce);
 
 router.post('/', multer, createSauces);
 
-//router.put('/:id', updateSauces);
+router.put('/:id', multer, updateSauces);
 
 router.delete('/:id', deleteSauces);
-// 
-// router.put('/:id/like', likeSauces);
+
+router.put('/:id/like', likeSauces);
 
 module.exports = router;
