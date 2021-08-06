@@ -3,23 +3,23 @@
 */
 const { Router } = require('express'); 
 const { getAllSauces, getOneSauce, createSauces, updateSauces, deleteSauces, likeSauces} = require('../controllers/sauces.controller');
-const auth = require('../middleware/auth');
+
 
 const multer = require('../middleware/multer-config');
 const { validatorJWT } = require('../middleware/validator-jwt');
 
 const router = Router();
 
-router.get('/', getAllSauces);
+router.get('/',validatorJWT, getAllSauces);
 
-router.get('/:id', getOneSauce);
+router.get('/:id',validatorJWT, getOneSauce);
 
-router.post('/', multer, createSauces);
+router.post('/',validatorJWT, multer, createSauces);
 
-router.put('/:id', multer, updateSauces);
+router.put('/:id',validatorJWT, multer, updateSauces);
 
-router.delete('/:id', deleteSauces);
+router.delete('/:id',validatorJWT, deleteSauces);
 
-router.put('/:id/like', likeSauces);
+router.post('/:id/like',validatorJWT, likeSauces);
 
 module.exports = router;
