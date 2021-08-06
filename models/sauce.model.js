@@ -1,8 +1,7 @@
-const mongoose = require('mongoose');
+const { Schema, model } = require('mongoose');
 
 // Modèle des sauces avec le type de données
-const sauceSchema = mongoose.Schema({
-    id: {type: ​ObjectID, require: true},
+const SauceSchema = Schema({
     name: {type: String, required: true, maxLength: 20},
     manufacturer: {type: String, required: true, maxLength: 20},
     description: {type: String, required: true, minLength: 10},
@@ -16,5 +15,12 @@ const sauceSchema = mongoose.Schema({
     userId: {type: String, required: true}
 });
 
+SauceSchema.method('toJSON', function() {
+    const { __v, _id, ...object } = this.toObject();
 
-module.exports = mongoose.model('sauce', sauceSchema);
+    object.id = _id;
+
+    return object
+})
+
+module.exports = model('Sauce', SauceSchema);

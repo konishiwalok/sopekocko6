@@ -4,7 +4,8 @@ const jwt = require("jsonwebtoken")
 const validatorJWT =(req, res, next) => {
 
     // Leer el token
-    const token = req.header('x-token')
+    const token = req.headers.authorization.split(' ')[1]
+
 
     if (!token) {
         return res.status(401).json({
@@ -16,7 +17,7 @@ const validatorJWT =(req, res, next) => {
     try {
         const { uid } = jwt.verify( token, process.env.JWT_KEY );
 
-        req.uid = uid;
+        req.userId = uid;
 
         next()
     } catch (error) {

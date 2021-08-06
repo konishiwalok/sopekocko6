@@ -6,7 +6,7 @@ const generateJWT = ( uid ) => {
 
         // ? se pueden agregar más campos diferentes al uid, como nombre etc, (no enviar info sensible)
         const payload = {
-            uid,
+            userId: uid,
         }
         jwt.sign( payload, process.env.JWT_KEY, {
             expiresIn: '6h'

@@ -25,8 +25,8 @@ const login = async (req, res) => {
     }
 
     // Generar el TOCKEN - JWT
-    const token = await generateJWT(userDB.id);
     const userId = userDB.id;
+    const token = await generateJWT(userId);
 
     res.json({
       userId: userId,
@@ -42,6 +42,7 @@ const login = async (req, res) => {
 };
 
 const signup = async (req, res) => {
+  console.log('Entro al signup');
   const { email, password } = req.body;
 
   try {
