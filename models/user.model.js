@@ -1,27 +1,23 @@
-const { Schema, model } = require('mongoose');
-//const uniqueValidator = require('mongoose-unique-validator');
+const { Schema, model } = require("mongoose");
 
 const UserShema = Schema({
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+});
 
-    email: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    password: {
-        type: String,
-        required: true
-    }
-})
+UserShema.method("toJSON", function () {
+  const { __v, _id, password, ...object } = this.toObject();
 
-//UserSchema.plugin(uniqueValidator);
+  object.uid = _id;
 
-UserShema.method('toJSON', function() {
-    const { __v, _id, password, ...object } = this.toObject();
+  return object;
+});
 
-    object.uid = _id;
-
-    return object
-})
-
-module.exports = model( 'User', UserShema );
+module.exports = model("User", UserShema);

@@ -4,7 +4,7 @@ const generateJWT = ( uid ) => {
 
     return new Promise((resolve, reject) => {
 
-        // ? se pueden agregar más campos diferentes al uid, como nombre etc, (no enviar info sensible)
+        // and can add more different fields to the uid, such as name etc, (do not send sensitive info)
         const payload = {
             userId: uid,
         }

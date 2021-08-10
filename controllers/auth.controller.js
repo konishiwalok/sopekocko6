@@ -12,19 +12,19 @@ const login = async (req, res) => {
     if (!userDB) {
       return res.status(404).json({
         ok: false,
-        msg: "Datos no validos.",
+        msg: "données non valables.",
       });
     }
-    // Verificar Contraseña
+    // Verify Password
     const validPassword = bcrypt.compareSync(password, userDB.password);
     if (!validPassword) {
       return res.status(404).json({
         ok: false,
-        msg: "Datos no validos.",
+        msg: "données non valables.",
       });
     }
 
-    // Generar el TOCKEN - JWT
+    // Generate the TOCKEN - JWT
     const userId = userDB.id;
     const token = await generateJWT(userId);
 
@@ -36,13 +36,13 @@ const login = async (req, res) => {
     console.log(error);
     res.status(500).json({
       ok: false,
-      msg: "Error inesperado...",
+      msg: "Erreur inattendu...",
     });
   }
 };
 
 const signup = async (req, res) => {
-  console.log('Entro al signup');
+  console.log('acces to signup');
   const { email, password } = req.body;
 
   try {
@@ -51,26 +51,26 @@ const signup = async (req, res) => {
     if (userDB) {
       return res.status(400).json({
         ok: false,
-        msg: "El Correo ya está registrado",
+        msg: "Le Courrier est déjà enregistré",
       });
     }
 
     const user = new User(req.body);
 
-    // Encriptar Password
+    // encrypt Password
     const salt = bcrypt.genSaltSync();
     user.password = bcrypt.hashSync(password, salt);
 
     await user.save();
 
     res.json({
-        message: `usuario ${email} registrado`
+        message: `utilisateur ${email} enregistré`
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       ok: false,
-      msg: "Error inesperado...",
+      msg: "Erreur inattendu...",
     });
   }
 };

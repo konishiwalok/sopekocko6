@@ -1,7 +1,6 @@
-
 const express = require('express');
 const path = require('path');
-// Crear el servidor de express
+// Create the express server
 const app = express();
 
 app.use((req, res, next) => {
@@ -15,15 +14,14 @@ app.use( express.json() );
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
-//-Rutas-------
+//-Routes-------
 
 // Auth
 app.use('/api/auth', require('./routes/auth.routes'));
-// Souce
+// Sauce
 app.use('/api/sauces', require('./routes/sauce.routes'));
 
-//-End-Rutas-------
 
-// Lectura y parseo del body
+// Reading and parsing the body
 
 module.exports = app;

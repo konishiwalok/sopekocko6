@@ -43,7 +43,7 @@ const createSauces = async (req, res) => {
 
   const sauce = new Sauce({
     ...sauceObject,
-    //modification de l'url de l'image, pour avoir une url complète
+    //changing the url of the image, to have a complete url
     imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
     likes: 0,
     dislikes: 0,
@@ -55,17 +55,17 @@ const createSauces = async (req, res) => {
     .then(() => res.status(201).json({ message: sauceObject.name }))
     .catch(error => res.status(400).json({ error }));
 }
-// MODIFY + IMAGE + TEXTES esperame
+// MODIFY + IMAGE + TEXTS 
 
 
 const updateSauces = async (req, res) => {
 
   const sauceObject = req.file ?
-    //modification des données et rajout d'une nouvelle image
+    //modifying data and adding a new image
     {
       ...JSON.parse(req.body.sauce),
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    } : //sinon on traite juste les données
+    } : ///otherwise we just process the data
     { ...req.body };
 
   Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })

@@ -11,8 +11,8 @@ const router = Router();
 
 router.post('/login',
     [
-        check('email', 'El Correo es obligatorio').isEmail(),
-        check('password', 'La Contraseña es obligatoria').not().isEmpty(),
+        check('email', 'Le courrier est obligatoire').isEmail(),
+        check('password', 'Le mot de passe est obligatoire').not().isEmpty(),
         validator
     ],
     login
@@ -20,8 +20,8 @@ router.post('/login',
 
 router.post('/signup',
     [
-        check('email', 'El Correo es obligatorio').isEmail(),
-        check('password', 'La Contraseña es obligatoria').not().isEmpty(),
+        check('email', 'Le courrier est obligatoire').isEmail(),
+        check('password', 'Le mot de passe est obligatoire').not().isEmpty(),
         validator
     ],
     signup

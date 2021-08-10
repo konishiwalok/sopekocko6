@@ -5,7 +5,7 @@ const app = require('./app');
 
 const { dbConnection } = require('./database/config');
 
-// Base de datos
+// database
 dbConnection();
 
 app.listen( process.env.PORT || 3000 , () => console.log(`Port ${process.env.PORT}`) );
