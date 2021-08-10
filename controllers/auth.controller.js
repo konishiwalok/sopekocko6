@@ -1,6 +1,8 @@
 const bcrypt = require("bcryptjs");
-const { generateJWT } = require("../helpers/jwt");
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
+const { generateJWT } = require("../helpers/jwt");
 const User = require("../models/user.model");
 
 const login = async (req, res) => {
@@ -42,37 +44,29 @@ const login = async (req, res) => {
 };
 
 const signup = async (req, res) => {
-  console.log('acces to signup');
-  const { email, password } = req.body;
 
-  try {
-    const userDB = await User.findOne({ email });
-
-    if (userDB) {
-      return res.status(400).json({
-        ok: false,
-        msg: "Le Courrier est déjà enregistré",
-      });
-    }
-
-    const user = new User(req.body);
-
-    // encrypt Password
-    const salt = bcrypt.genSaltSync();
-    user.password = bcrypt.hashSync(password, salt);
-
-    await user.save();
-
-    res.json({
-        message: `utilisateur ${email} enregistré`
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      ok: false,
-      msg: "Erreur inattendu...",
-    });
-  }
+  //Hashage du mot de passe par Bcrypt, et demande de saler le mot de passe 10fois
+  bcrypt.hash(req.body.password, 10)
+      .then(
+        hash => {
+          // Chiffrement de l'email 
+          key = "motDePasseInviolable:)";
+          cipher = crypto.createCipher('aes192', key)
+          cipher.update(req.body.email, 'binary', 'hex')
+          encodedString = cipher.final('hex') 
+          // Enregistrement des données de l'utilisateur
+          const user = new User({
+              email: encodedString,
+              password: hash
+            });
+            // Verification des enregistrements cryptés
+            console.log("Voici l'email encrypté : ", encodedString);
+            console.log("Voici le mot de passe hashé : ", hash); 
+            user.save()
+                .then(() => res.status(201).json({ message: 'Utilisateur créé' }))
+                .catch(error => res.status(400).json({ error }));
+        })
+        .catch(error => res.status(500).json({ error }));
 };
 
 module.exports = {

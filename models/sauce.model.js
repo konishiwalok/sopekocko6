@@ -1,7 +1,7 @@
-const { Schema, model } = require("mongoose");
+const mongoose = require('mongoose');
 
 // Sauces model with data type
-const SauceSchema = Schema({
+const sauceSchema = mongoose.Schema({
   name: { type: String, required: true },
   manufacturer: { type: String, required: true },
   description: { type: String, required: true },
@@ -15,4 +15,4 @@ const SauceSchema = Schema({
   userId: { type: String, required: true },
 });
 
-module.exports = model("Sauce", SauceSchema);
+module.exports = mongoose.model('sauce', sauceSchema);

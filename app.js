@@ -1,5 +1,7 @@
 const express = require('express');
 const path = require('path');
+const helmet = require('helmet');
+const dotenv = require('dotenv').config();
 // Create the express server
 const app = express();
 
@@ -13,7 +15,7 @@ app.use((req, res, next) => {
 app.use( express.json() );
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
-
+app.use(helmet());
 //-Routes-------
 
 // Auth

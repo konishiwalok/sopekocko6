@@ -1,23 +1,14 @@
-const { Schema, model } = require("mongoose");
+//plugin Npm Node.js
+const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 
-const UserShema = Schema({
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
+// Modèle des utilisateurs
+const userSchema = mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true }
 });
 
-UserShema.method("toJSON", function () {
-  const { __v, _id, password, ...object } = this.toObject();
+//ajouter plugin pour vérifier que deux utilisateurs ne peuvent pas partager la même adresse e-mail.
+userSchema.plugin(uniqueValidator);
 
-  object.uid = _id;
-
-  return object;
-});
-
-module.exports = model("User", UserShema);
+module.exports = mongoose.model('User', userSchema);
