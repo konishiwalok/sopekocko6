@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken")
 
-const validatorJWT =(req, res, next) => {
+module.exports = (req, res, next) => {
 
     // read token
     const token = req.headers.authorization.split(' ')[1]
@@ -10,11 +10,11 @@ const validatorJWT =(req, res, next) => {
         return res.status(401).json({
             ok: false,
             msg: 'There is no token in the request'
-        });    
+        });
     }
 
     try {
-        const { uid } = jwt.verify( token, process.env.JWT_KEY );
+        const { uid } = jwt.verify(token, process.env.JWT_KEY);
 
         req.userId = uid;
 
@@ -23,10 +23,6 @@ const validatorJWT =(req, res, next) => {
         return res.status(401).json({
             ok: false,
             msg: 'Token non valable'
-        });  
+        });
     }
-}
-
-module.exports = {
-    validatorJWT
 }

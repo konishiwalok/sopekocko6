@@ -20,7 +20,6 @@ const generateJWT = ( uid ) => {
 
         });
     });
-
 }
 
 module.exports = {

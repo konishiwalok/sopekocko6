@@ -5,7 +5,9 @@ const fs = require('fs');
 
 const regex = /[a-zA-Z0-9 _.,'’(Ééèàû)]+$/;
 
-const getAllSauces = async (req, res) => {
+// GET ALL THE PRODUCTS
+
+exports.getAllSauces = (req, res, next) => {
 
   Sauce.find().then(
     (sauces) => {
@@ -20,16 +22,16 @@ const getAllSauces = async (req, res) => {
   );
 }
 
-
-const getOneSauce = async (req, res) => {
+// GET ONE SAUCE WITH HIS ID
+exports.getOneSauce = (req, res, next) => {
 
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => res.status(200).json(sauce))
     .catch((error) => res.status(404).json({ error }));
 };
+// CREATE SAUCES + CONDITIONS + TEXTS 
 
-
-const createSauces = async (req, res) => {
+exports.createSauces = (req, res, next) => {
 
   const sauceObject = JSON.parse(req.body.sauce);
 
@@ -58,7 +60,7 @@ const createSauces = async (req, res) => {
 // MODIFY + IMAGE + TEXTS 
 
 
-const updateSauces = async (req, res) => {
+exports.updateSauces = (req, res, next) => {
 
   const sauceObject = req.file ?
     //modifying data and adding a new image
@@ -75,7 +77,7 @@ const updateSauces = async (req, res) => {
 
 // DELETE + IMAGE
 
-const deleteSauces = async (req, res) => {
+exports.deleteSauces = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
     .then(thing => {
       const filename = thing.imageUrl.split('/images/')[1];
@@ -91,8 +93,7 @@ const deleteSauces = async (req, res) => {
 
 
 // LIKES DISLIKES
-
-const likeSauces = async (req, res) => {
+exports.likeSauces = (req, res, next) =>  {
 
   const choice = {
     LIKE: 1,
@@ -100,71 +101,68 @@ const likeSauces = async (req, res) => {
     RESET: 0,
   }
   const idSauce = req.params.id
-
   const { userId, like: userChoice } = req.body
-
-  const sauce = await Sauce.findById(idSauce);
 
   if (!(Number.isInteger(userChoice) && (userChoice >= -1 && userChoice <= 1))) {
     console.log('error ')
     return null
   }
 
-  console.log(sauce);
+  Sauce.findById(idSauce)
+    .then(sauce => {
+      if (userChoice === choice.RESET) {
+        console.log('reset all likes ')
+        removeUser(userId, sauce.usersLiked)
+        removeUser(userId, sauce.usersDisliked)
+      }
 
-  if (userChoice === choice.RESET) {
-    console.log('reset all likes ')
-    removeUser(userId, sauce.usersLiked)
-    removeUser(userId, sauce.usersDisliked)
-  }
+      if (userChoice === choice.LIKE) {
+        console.log('user liked the sauce ')
+        if (sauce.usersLiked.find(u => u === userId)) {
+          console.log('user already voted ‍')
+          return 'you have déjà voté !'
+        }
+        sauce['usersLiked'].push(userId)
+        sauce['likes'] = sauce['usersLiked'].length
 
-  if (userChoice === choice.LIKE) {
-    console.log('user liked the sauce ')
-    if (sauce.usersLiked.find(u => u === userId)) {
-      console.log('user already voted ‍')
-      return 'you have déjà voté !'
-    }
-    sauce['usersLiked'].push(userId)
-    sauce['likes'] = sauce['usersLiked'].length
+        if (sauce.usersDisliked.find(u => u === userId)) {
+          removeUser(userId, sauce.userDislikes)
+        }
+      }
 
-    if (sauce.usersDisliked.find(u => u === userId)) {
-      removeUser(userId, sauce.userDislikes)
-    }
-  }
+      if (userChoice === choice.DISLIKE) {
+        console.log('user hate the sauce ')
+        if (sauce.usersDisliked.find(u => u === userId)) {
+          console.log('user already voted ‍')
+          return 'you have déjà voté !'
+        }
+        sauce['usersDisliked'].push(userId)
+        sauce['dislikes'] = sauce['usersDisliked'].length
 
-  if (userChoice === choice.DISLIKE) {
-    console.log('user hate the sauce ')
-    if (sauce.usersDisliked.find(u => u === userId)) {
-      console.log('user already voted ‍')
-      return 'you have déjà voté !'
-    }
-    sauce['usersDisliked'].push(userId)
-    sauce['dislikes'] = sauce['usersDisliked'].length
+        if (sauce.usersLiked.find(u => u === userId)) {
+          removeUser(userId, sauce.usersLiked)
+        }
+      }
 
-    if (sauce.usersLiked.find(u => u === userId)) {
-      removeUser(userId, sauce.usersLiked)
-    }
+      sauce.likes = sauce.usersLiked.length
+      sauce.dislikes = sauce.usersDisliked.length
 
+      //console.log(sauce)
+      const { usersLiked, usersDisliked, likes, dislikes } = sauce;
+      const campos = {
+        usersLiked, usersDisliked, likes, dislikes
+      }
 
-  }
-
-  sauce.likes = sauce.usersLiked.length
-  sauce.dislikes = sauce.usersDisliked.length
-
-  //console.log(sauce)
-
-  const {usersLiked, usersDisliked, likes, dislikes } = sauce;
-
-  const campos = {
-    usersLiked, usersDisliked, likes, dislikes
-  }
-
-  const sauceLike = await Sauce.findByIdAndUpdate(idSauce, campos, { new: true });
-
-  res.status(200).json({ message: 'Cambiado', sauceLike })
+      Sauce.findByIdAndUpdate(idSauce, campos, { new: true })
+        .then(sauceLike => {
+          res.status(200).json({ message: 'Cambiado', sauceLike })
+        })
+        .catch(error => res.status(500).json({ error }))
+    })
+    .catch(error => res.status(500).json({ error }));
 }
 
-const removeUser = (userId, likesTab)  => {
+const removeUser = (userId, likesTab) => {
   const index = likesTab.indexOf(userId)
   if (index > -1) {
     likesTab.splice(index, 1)
@@ -172,12 +170,3 @@ const removeUser = (userId, likesTab)  => {
 
   return likesTab
 }
-
-module.exports = {
-  getAllSauces,
-  getOneSauce,
-  createSauces,
-  updateSauces,
-  deleteSauces,
-  likeSauces
-};

@@ -1,75 +1,60 @@
 const bcrypt = require("bcryptjs");
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
+const cryptojs = require('crypto-js');
 
 const { generateJWT } = require("../helpers/jwt");
 const User = require("../models/user.model");
 
-const login = async (req, res) => {
-  const { email, password } = req.body;
+exports.signup = (req, res, next) => {
+  const cryptedResearchedEmail = cryptojs.HmacSHA256(req.body.email, process.env.EMAIL_KEY).toString();
+  User.findOne({ email: cryptedResearchedEmail })
+    .then(user => {
+      if (user) {
+        return res.status(401).json({
+          ok: false,
+          msg: 'l'utilisateur déjà enregistré '
+        });
+      }
+      bcrypt.hash(req.body.password, 10)
+        .then(hash => {
 
-  try {
-    const userDB = await User.findOne({ email });
-
-    if (!userDB) {
-      return res.status(404).json({
-        ok: false,
-        msg: "données non valables.",
-      });
-    }
-    // Verify Password
-    const validPassword = bcrypt.compareSync(password, userDB.password);
-    if (!validPassword) {
-      return res.status(404).json({
-        ok: false,
-        msg: "données non valables.",
-      });
-    }
-
-    // Generate the TOCKEN - JWT
-    const userId = userDB.id;
-    const token = await generateJWT(userId);
-
-    res.json({
-      userId: userId,
-      token: token,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      ok: false,
-      msg: "Erreur inattendu...",
-    });
-  }
-};
-
-const signup = async (req, res) => {
-
-  //Hashage du mot de passe par Bcrypt, et demande de saler le mot de passe 10fois
-  bcrypt.hash(req.body.password, 10)
-      .then(
-        hash => {
-          // Chiffrement de l'email 
-          key = "motDePasseInviolable:)";
-          cipher = crypto.createCipher('aes192', key)
-          cipher.update(req.body.email, 'binary', 'hex')
-          encodedString = cipher.final('hex') 
-          // Enregistrement des données de l'utilisateur
           const user = new User({
-              email: encodedString,
-              password: hash
-            });
-            // Verification des enregistrements cryptés
-            console.log("Voici l'email encrypté : ", encodedString);
-            console.log("Voici le mot de passe hashé : ", hash); 
-            user.save()
-                .then(() => res.status(201).json({ message: 'Utilisateur créé' }))
-                .catch(error => res.status(400).json({ error }));
+            email: cryptojs.HmacSHA256(req.body.email, process.env.EMAIL_KEY).toString(), // cryptage de l'email, méthode 'HmacSHA256' SANS salage (pour pouvoir ensuite rechercher l'utilisateur simplement lors du login),
+            password: hash
+          });
+          user.save()
+            .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
+            .catch(error => res.status(400).json({ error }));
         })
         .catch(error => res.status(500).json({ error }));
+    })
+    .catch(error => res.status(500).json({ error }));
+
+
+
 };
 
-module.exports = {
-  login,
-  signup
+exports.login = (req, res, next) => {
+  const cryptedResearchedEmail = cryptojs.HmacSHA256(req.body.email, process.env.EMAIL_KEY).toString();
+  User.findOne({ email: cryptedResearchedEmail })
+    .then(user => {
+      if (!user) {
+        return res.status(401).json({ error: 'Utilisateur non trouvé !' });
+      }
+      bcrypt.compare(req.body.password, user.password)
+        .then(valid => {
+          if (!valid) {
+            return res.status(401).json({ error: 'Mot de passe incorrect !' });
+          }
+          generateJWT(user._id)
+            .then(token => {
+              res.status(200).json({
+                userId: user._id,
+                token
+              });
+            })
+        })
+        .catch(error => res.status(500).json({ error }));
+    })
+    .catch(error => res.status(500).json({ error }));
 };
+

@@ -1,9 +1,26 @@
+require('dotenv').config();
+
 const express = require('express');
 const path = require('path');
 const helmet = require('helmet');
-const dotenv = require('dotenv').config();
+// nettoie les données fournis par l'utilisateur pour empecher les injection ( nettoie les $ et les .)
+const mongoSanitize = require('express-mongo-sanitize');
 // Create the express server
 const app = express();
+const rateLimit = require("express-rate-limit");
+const { dbConnection } = require('./database/config');
+
+// Enable if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
+// see https://expressjs.com/en/guide/behind-proxies.html
+// app.set('trust proxy', 1);
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
+});
+
+//  apply to all requests
+app.use(limiter);
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -14,8 +31,13 @@ app.use((req, res, next) => {
 
 app.use( express.json() );
 
+// database
+dbConnection();
+
 app.use('/images', express.static(path.join(__dirname, 'images')));
+
 app.use(helmet());
+app.use(mongoSanitize());
 //-Routes-------
 
 // Auth

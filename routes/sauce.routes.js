@@ -2,24 +2,24 @@
     Path: /api/sauces
 */
 const { Router } = require('express'); 
-const { getAllSauces, getOneSauce, createSauces, updateSauces, deleteSauces, likeSauces} = require('../controllers/sauces.controller');
+const saucesCtrl = require('../controllers/sauces.controller');
 
 
 const multer = require('../middleware/multer-config');
-const { validatorJWT } = require('../middleware/validator-jwt');
+const auth = require('../middleware/auth');
 
 const router = Router();
 
-router.get('/',validatorJWT, getAllSauces);
+router.get('/', auth, saucesCtrl.getAllSauces);
 
-router.get('/:id',validatorJWT, getOneSauce);
+router.get('/:id', auth, saucesCtrl.getOneSauce);
 
-router.post('/',validatorJWT, multer, createSauces);
+router.post('/', auth, multer, saucesCtrl.createSauces);
 
-router.put('/:id',validatorJWT, multer, updateSauces);
+router.put('/:id', auth, multer, saucesCtrl.updateSauces);
 
-router.delete('/:id',validatorJWT, deleteSauces);
+router.delete('/:id', auth, saucesCtrl.deleteSauces);
 
-router.post('/:id/like',validatorJWT, likeSauces);
+router.post('/:id/like', auth, saucesCtrl.likeSauces);
 
 module.exports = router;

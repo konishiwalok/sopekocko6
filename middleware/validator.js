@@ -13,5 +13,5 @@ const validator = (req, res, next) => {
 }
 
 module.exports = {
-    validator: validator
+    validator
 };

@@ -1,8 +1,5 @@
 // getting-started.js
 const mongoose = require('mongoose');
-const mongoSanitize = require('express-mongo-sanitize')
-const helmet = require('helmet');
-const dotenv = require('dotenv').config();
 // Make Mongoose use `findOneAndUpdate()`. Note that this option is `true`
 // by default, you need to set it to false.
 mongoose.set('useFindAndModify', false);
@@ -22,8 +19,6 @@ const dbConnection = async () => {
     }
     
 }
-mongoSanitize();
-helmet();
 
 module.exports = {
     dbConnection
