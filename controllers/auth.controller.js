@@ -11,7 +11,7 @@ exports.signup = (req, res, next) => {
       if (user) {
         return res.status(401).json({
           ok: false,
-          msg: 'l'utilisateur déjà enregistré '
+          msg: 'utilisateur déjà enregistré'
         });
       }
       bcrypt.hash(req.body.password, 10)
