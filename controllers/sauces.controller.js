@@ -54,7 +54,7 @@ exports.createSauces = (req, res, next) => {
   });
 
   sauce.save()
-    .then(() => res.status(201).json({ message: sauceObject.name }))
+    .then(() => res.status(201).json({ message: 'Sauce sauvegardé !' }))
     .catch(error => res.status(400).json({ error }));
 }
 // MODIFY + IMAGE + TEXTS 
