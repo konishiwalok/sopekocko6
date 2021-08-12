@@ -8,10 +8,8 @@ const validator = (req, res, next) => {
             errors: errors.mapped()
         });
     }
-    
     next();
 }
-
 module.exports = {
     validator
 };
