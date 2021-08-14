@@ -2,6 +2,8 @@
 const { Router } = require('express'); 
 const { check } = require('express-validator');
 
+const passwordVerify = require('../middleware/password');
+
 const userCtrl = require('../controllers/auth.controller');
 const { validator } = require('../middleware/validator');
 
@@ -13,6 +15,7 @@ router.post('/signup',
         check('password', 'Le mot de passe est obligatoire').not().isEmpty(),
         validator
     ],
+    passwordVerify,
     userCtrl.signup
 );
 

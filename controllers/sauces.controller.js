@@ -1,5 +1,5 @@
-const Sauce = require('../models/sauce.model')
-const User = require('../models/user.model')
+const Sauce = require('../models/Sauce.model')
+const User = require('../models/User.model')
 
 const fs = require('fs');
 

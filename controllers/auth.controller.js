@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const cryptojs = require('crypto-js');
 
 const { generateJWT } = require("../helpers/jwt");
-const User = require("../models/user.model");
+const User = require("../models/User.model");
 
 exports.signup = (req, res, next) => {
   const cryptedResearchedEmail = cryptojs.HmacSHA256(req.body.email, process.env.EMAIL_KEY).toString();
